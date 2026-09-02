@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,13 +91,19 @@ fun EditNumberField(modifier:Modifier = Modifier) {
 }*/
 
 @Composable
-fun EditNumberField(modifier: Modifier = Modifier) {
+fun EditNumberField(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     var amountInput by remember { mutableStateOf("") }
+    var amount = amountInput.toDoubleOrNull() ?: 0.0
+    var tip = calculateTip(amount)
+
 
     TextField(
         value = amountInput,
         onValueChange = { amountInput = it },
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        label = { Text(stringResource(R.string.bill_amount)) },
+        singleLine = true
     )
 }
 
