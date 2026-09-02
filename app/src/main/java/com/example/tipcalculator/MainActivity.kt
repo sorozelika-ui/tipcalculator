@@ -120,16 +120,15 @@ fun TipTimeLayoutPreview() {
     }
 }
 */
-
 package com.example.tipcalculator
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -141,7 +140,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -158,7 +156,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.tipcalculator.ui.theme.TipCalculatorTheme
 import java.text.NumberFormat
-import kotlin.math.ceil
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,27 +177,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipTimeLayout() {
 
-    // Montant de la facture
+    // État du montant de la facture
     var amountInput by remember { mutableStateOf("") }
 
-    // Pourcentage du pourboire
-    var tipPercentInput by remember { mutableStateOf("") }
+    // État du pourcentage de pourboire
+    var tipInput by remember { mutableStateOf("") }
 
-    // Permet d'activer ou désactiver l'arrondi
-    var roundUp by remember { mutableStateOf(false) }
-
-    // Conversion du montant
+    // Convertit le montant de la facture en Double
     val amount = amountInput.toDoubleOrNull() ?: 0.0
 
-    // Conversion du pourcentage
-    val tipPercent = tipPercentInput.toDoubleOrNull() ?: 15.0
+    // Convertit le pourcentage de pourboire en Double
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
 
-    // Calcul du pourboire
-    val tip = calculateTip(
-        amount = amount,
-        tipPercent = tipPercent,
-        roundUp = roundUp
-    )
+    // Calcule le pourboire
+    val tip = calculateTip(amount, tipPercent)
 
     Column(
         modifier = Modifier
@@ -220,36 +210,27 @@ fun TipTimeLayout() {
                 .align(alignment = Alignment.Start)
         )
 
-        // Champ pour le montant de la facture
+        // Champ Montant de la facture
         EditNumberField(
+            label = R.string.bill_amount,
             value = amountInput,
-            onValueChange = { amountInput = it },
-            label = stringResource(R.string.bill_amount),
+            onValueChanged = { amountInput = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
 
-        // Champ pour le pourcentage du pourboire
+        // Champ Pourcentage du pourboire
         EditNumberField(
-            value = tipPercentInput,
-            onValueChange = { tipPercentInput = it },
-            label = stringResource(R.string.how_was_the_service),
+            label = R.string.how_was_the_service,
+            value = tipInput,
+            onValueChanged = { tipInput = it },
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
 
-        // Option pour arrondir le pourboire
-        RoundUpRow(
-            roundUp = roundUp,
-            onRoundUpChanged = { roundUp = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp)
-        )
-
-        // Affichage du résultat
+        // Affichage du montant du pourboire
         Text(
             text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
@@ -261,62 +242,30 @@ fun TipTimeLayout() {
 
 @Composable
 fun EditNumberField(
+    @StringRes label: Int,
     value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
+    onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = onValueChanged,
         modifier = modifier,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number
         ),
         label = {
-            Text(label)
+            Text(stringResource(label))
         },
         singleLine = true
     )
 }
 
-@Composable
-fun RoundUpRow(
-    roundUp: Boolean,
-    onRoundUpChanged: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        Text(
-            text = stringResource(R.string.round_up_tip),
-            modifier = Modifier.weight(1f)
-        )
-
-        Switch(
-            checked = roundUp,
-            onCheckedChange = onRoundUpChanged
-        )
-    }
-}
-
-/**
- * Calculates the tip based on the user input.
- */
 private fun calculateTip(
     amount: Double,
-    tipPercent: Double,
-    roundUp: Boolean
+    tipPercent: Double = 15.0
 ): String {
-
-    var tip = tipPercent / 100 * amount
-
-    if (roundUp) {
-        tip = ceil(tip)
-    }
+    val tip = tipPercent / 100 * amount
 
     return NumberFormat
         .getCurrencyInstance()
@@ -330,4 +279,6 @@ fun TipTimeLayoutPreview() {
         TipTimeLayout()
     }
 }
+
+
 
