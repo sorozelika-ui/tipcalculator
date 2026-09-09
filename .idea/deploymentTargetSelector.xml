@@ -4,11 +4,11 @@
     <selectionStates>
       <SelectionState runConfigName="Tip_Calculator.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-09-09T14:39:21.127568Z">
+        <DropdownSelection timestamp="2026-09-09T15:34:29.166494Z">
           <Target type="DEFAULT_BOOT">
-            <template>
-              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=pa3q/36" />
-            </template>
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/sorowagniguizelika/.android/avd/Small_Phone.avd" />
+            </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
